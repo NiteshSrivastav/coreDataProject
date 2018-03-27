@@ -11,18 +11,18 @@ import CoreData
 
 class CoreDataHandler: NSManagedObject {
     
-    private class func getContext() -> NSManagedObjectContext{
+     class func getContext() -> NSManagedObjectContext{
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
     }
     
-    class func saveObject(username : String,mobile : String,email : String)-> Bool{
+    class func saveObject(username : String,mobile : String)-> Bool{
         let context = getContext()
         let entity = NSEntityDescription.entity(forEntityName: "Users", in: context)
         let manageObject = NSManagedObject(entity: entity!, insertInto: context)
-        manageObject.setValue("Nitesh", forKey: "username")
-        manageObject.setValue("9458788012", forKey: "mobile")
-        manageObject.setValue("nit@gmail.com", forKey: "email")
+        manageObject.setValue(username, forKey: "username")
+        manageObject.setValue(mobile, forKey: "mobile")
+      //  manageObject.setValue(email, forKey: "email")
         do{
             try context.save()
             return true
@@ -49,6 +49,17 @@ class CoreDataHandler: NSManagedObject {
         context.delete(user)
         do{
            try  context.save()
+            return true
+        }
+        catch{
+            return false
+        }
+    }
+    class func cleanData() -> Bool {
+        let context = getContext()
+        let delete = NSBatchDeleteRequest(fetchRequest: Users.fetchRequest())
+        do{
+            try context.execute(delete)
             return true
         }
         catch{
